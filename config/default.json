@@ -1,0 +1,12 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "mongodb": "mongodb://localhost:27017/gaimedEvenementen",
+  "public": "../public/",
+  "auth": {
+    "token": {
+      "secret": "wcg86HUaElBaz+ZZkwnkEIMyqsoz8pznYYrLEn6tnJqt03E1gmcBfm9geJAY8XnJw4KJKLoJG2RDEPpXTD9z5A=="
+    },
+    "local": {}
+  }
+}

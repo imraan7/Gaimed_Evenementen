@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <title>Maak een evenement aan</title>
+</head>
+
+<body>
+  <script src="/components/socket.io-client/socket.io.js"></script>
+  <script src="/components/feathers-client/dist/feathers.min.js"></script>
+  <script src="/components/jquery/dist/jquery.min.js"></script>
+
+
+  Evenement naam: <br>
+  <input id="name" type="text" />
+  <button id="createEvent">Maak evenement aan</button>
+
+
+  <script>
+    var socket = io();
+
+    var app = feathers()
+      .configure(feathers.hooks())
+      .configure(feathers.socketio(socket));
+
+    var eventService = app.service('events');
+
+    $("#createEvent").click(function(e) {
+      eventService.create({
+        name: $("#name").val()
+      }).catch(err => {
+        console.log("error", err);
+      })
+    })
+  </script>
+
+</body>
+
+</html>

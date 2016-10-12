@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>Maak een evenement aan</title>
+</head>
+
+<body>
+  <script src="/components/socket.io-client/socket.io.js"></script>
+  <script src="/components/feathers-client/dist/feathers.min.js"></script>
+  <script src="/components/jquery/dist/jquery.min.js"></script>
+
+  <h1>Aanmelden voor evenement</h1>
+  Voornaam:<br>
+  <input type="text" id="firstname">
+  <br> Achternaam:<br>
+  <input type="text" id="lastname">
+  <br> Telefoonnummer:<br>
+  <input type="text" id="telephone">
+  <br> Emailadres:<br>
+  <input type="text" id="email">
+  <br> <button id="submit">Aanmelden</button>
+  <br>
+
+  <script>
+    var socket = io();
+
+    var app = feathers()
+      .configure(feathers.hooks())
+      .configure(feathers.socketio(socket));
+
+    var employeeService = app.service('employees');
+    var eventService = app.service('events');
+
+    var eventName = window.location.search.substring(1)
+    var eventID = ""
+
+    eventService.find({
+      query: {}
+    }).then(items => {
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].name === eventName) {
+          eventID = items[i]._id
+        }
+      }
+    })
+
+    $("#submit").click(function(e) {
+      employeeService.create({
+        type: 'inwoner',
+        firstname: $("#firstname").val(),
+        lastname: $("#lastname").val(),
+        telephone: $("#telephone").val(),
+        email: $("#email").val(),
+        event: eventID
+      })
+      .then(item => {
+          console.log("success", item);
+      })
+      .catch(err => {
+        console.log("error", err);
+      })
+    })
+  </script>
+
+</body>
+
+</html>

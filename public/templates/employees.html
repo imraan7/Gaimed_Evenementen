@@ -1,0 +1,23 @@
+<h1>Aanmeldingen<h1>
+<table>
+  <tr>
+    <th>Status</th>
+    <th>Naam</th>
+    <th>Achteraam</th>
+    <th>Telefoon</th>
+    <th>Emailadres</th>
+    <th>Afdeling</th>
+    <th>Event(test)</th>
+  </tr>
+  {% for item in items %}
+      <tr>
+        <td> {{item.type}} </td>
+        <td> {{item.firstname}} </td>
+        <td> {{item.lastname}} </td>
+        <td> {{item.telephone}} </td>
+        <td> {{item.email}} </td>
+        <td> {{item.department}} </td>
+        <td> {{item.event}} </td>
+      </tr>
+  {% endfor %}
+</table>

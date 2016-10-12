@@ -1,0 +1,73 @@
+<html>
+
+<head>
+  <title>Evenementen</title>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script src="/components/socket.io-client/socket.io.js"></script>
+  <script src="/components/feathers-client/dist/feathers.min.js"></script>
+  <script src="/components/jquery/dist/jquery.min.js"></script>
+  <script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="/components/nunjucks/browser/nunjucks.min.js"></script>
+
+  <script>
+    var socket = io();
+
+    var app = feathers()
+      .configure(feathers.hooks())
+      .configure(feathers.socketio(socket));
+    var eventService = app.service('events');
+    var employeeService = app.service('employees');
+    var eventID = ""
+
+    var Home = {
+      fetch: function() {
+        eventService.find({
+          query: {}
+        }).then(items => {
+          $("#app").html(nunjucks.render("/templates/eventList.html", {
+            items: items
+          }))
+          Home.showEmployees()
+        })
+      },
+      showEmployees: function() {
+        $(".showEmployees").click(function(e) {
+
+          //de aangeklikte event ophalen
+          var selectedEvent = $(".eventList").find(":selected").text();
+          //de eventID ophalen dmv de eventnaam
+          eventService.find({
+            query: {}
+          }).then(items => {
+            for (var i = 0; i < items.length; i++) {
+              if (items[i].name === selectedEvent) {
+                eventID = items[i]._id
+                console.log("success");
+              }
+            }
+          })
+
+          employeeService.find({
+            query: {}
+          }).then(items => {
+            for (var i = 0; i < items.length; i++) {
+              if (items[i].event !== eventID) {
+                items.splice(i, 1)
+              }
+            }
+            $("#app").html(nunjucks.render("/templates/employees.html", {
+              items: items
+            }))
+          })
+        })
+      }
+    }
+    Home.fetch()
+  </script>
+</body>
+
+</html>

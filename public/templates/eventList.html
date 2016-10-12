@@ -1,0 +1,10 @@
+<h1>Toon aanmelders</h1>
+
+Kies een evenement:</br>
+<select class="eventList">
+    {% for item in items %}
+      <option>{{ item.name }}</option>
+    {% endfor %}
+</select>
+
+<button class="showEmployees">Toon aanmelders</button>

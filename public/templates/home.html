@@ -1,0 +1,15 @@
+<h1>Aanmelden evenement</h1>
+
+Kies een evenement:</br>
+<select class="eventList">
+    {% for item in items %}
+      <option>{{ item.name }}</option>
+    {% endfor %}
+</select>
+
+</br></br>
+Bent u een inwoner of een ambtenaar?</br>
+<input type="radio" id='radio_1' name="employee" value="resident">Inwoner<br>
+<input type="radio" id='radio_2' name="employee" value="officiary">Ambtenaar<br>
+</br>
+<button class="joinEvent">Aanmelden</button>
