@@ -38,6 +38,7 @@
     "moment": "^2.15.1",
     "mongoose": "^4.6.2",
     "passport": "^0.3.2",
+    "react-datepicker": "^0.30.0",
     "serve-favicon": "^2.3.0",
     "winston": "^2.2.0"
   },

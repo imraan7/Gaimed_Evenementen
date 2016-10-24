@@ -12,9 +12,10 @@ const eventSchema = new Schema({
   name: { type: String, required: true },
   dates: [{
       date : { type: Date, required: true },
-      times : [
-        { type: String, required: true },
-      ]
+      times : [{
+          beginTime : { type: String, required: true },
+          endTime : { type: String, required: true },
+      }]
   }],
   description: { type: String, required: true },
   createdAt: { type: Date, 'default': Date.now },

@@ -1,83 +1,135 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Form, actions } from 'react-redux-form'
 import { Button, Input, Select, Label, Panel, PanelHeader, Overlay} from 'rebass'
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
+import $ from 'jquery'
 
 import {fetch_events, create_event} from '../actions/events'
 
 class ConfigureEvents extends React.Component {
 
-    state={ popupOpen : false, dateIndex : 0, timeIndex: 0 }
+    state={ event : { dates :[] }, popupOpen : false, dateIndex : null}
 
     update = (e) => {
-        const {dispatch} = this.props
-        dispatch(actions.change("event." + e.target.name, e))
+        let {event} = this.state
+        event[e.target.name] = e.target.value
+
+        this.setState({
+            event : event
+        })
     }
 
-    updateDate = (e) => {
-        const {dispatch} = this.props
-        dispatch(actions.change(`event.dates[${this.state.dateIndex}].date`, e))
-        console.log(event.dates);
+    updateDate = (dateInput) => {
+        let {event, dateIndex} = this.state
+
+        event.dates[dateIndex].date = dateInput
+        this.setState({
+            event : event,
+            dateIndex : dateIndex
+        })
+        console.log(event);
     }
 
     updateTime = (e) => {
-        const {dispatch} = this.props
-        const index = e.target.dataset.index
-        dispatch(actions.change(`event.dates[${this.state.dateIndex}].times[${index}].${e.target.name}`, e))
+        let {event, dateIndex} = this.state
+        let index = e.target.dataset.index
+        event.dates[dateIndex].times[e.target.dataset.index][e.target.name] = e.target.value
+
+        this.setState({
+            event : event
+        })
     }
 
     saveEvent= () => {
-        const { dispatch, event } = this.props
+        const {dispatch} = this.props
+        let {event} = this.state
         console.log(event);
-        //dispatch(create_event(event, fetch_events))
+        dispatch(create_event(event, fetch_events))
     }
 
     addDate = (e) => {
         e.preventDefault();
-        const {dispatch, event} = this.props
 
         this.setState({ popupOpen : true })
 
-        if(event.dates.length === 0){
-            dispatch(actions.change(`event.dates[${this.state.dateIndex}]`, { date : "", times : [] }))
-        }
-        else {
-            this.setState({ dateIndex : this.state.dateIndex+1 })
-            dispatch(actions.change(`event.dates[${this.state.dateIndex}].length}]`, { date : "", times : []} ))
-        }
-        console.log(event.dates);
+        let {event, dateIndex} = this.state
+        event.dates.push({ date : moment(), times : [] })
+
+        if(dateIndex == null)
+            dateIndex = 0
+        else
+            dateIndex++
+
+        this.setState({
+            event : event,
+            dateIndex : dateIndex
+        })
     }
     stopPopup = (e) => {
         e.preventDefault();
         this.setState({ popupOpen : false })
     }
-    addTime = (e) => {
-        e.preventDefault();
-        const { dispatch, event } = this.props
+    addTime = () => {
+        let {event, dateIndex} = this.state
 
-        if(event.dates[this.state.dateIndex].times.length === 0) // als er nog geen time is maak ik dit aan
-            dispatch(actions.change(`event.dates[${this.state.dateIndex}].times`, [{ beginTime : "", endTime : ""}] ))
-        else {
-            // timeIndex omhoog
-            this.setState({ timeIndex : this.state.timeIndex+1 })
-            // voeg nieuwe key toe in array, die wordt automatisch rendered door die .map bij showTime
-            dispatch(actions.change(`event.dates[${this.state.dateIndex}].times[${event.dates[this.state.dateIndex].times.length}]`, { beginTime : "", endTime : ""} ))
-        }
+        event.dates[dateIndex].times.push({ beginTime : "", endTime : ""})
+
+        this.setState({
+            event : event
+        })
     }
-
     showTime = () => {
-        const {event} = this.props
-        console.log(event.dates);
-
-        if("undefined" !== typeof event.dates[this.state.dateIndex] && "undefined" !== typeof event.dates[this.state.dateIndex].times)
-            return event.dates[this.state.dateIndex].times.map((time, i) => {
-                return (
-                    <div key={i}>
+        let {event, dateIndex} = this.state
+        if("undefined" !== typeof event.dates[dateIndex]){
+            return event.dates[dateIndex].times.map((time, i) => {
+                return(
+                    <div key={i} >
                         <Input label="Begintijd" name="beginTime" value={time.beginTime} data-index={i} onChange={this.updateTime} />
                         <Input label="Eindtijd" name="endTime" value={time.endTime} data-index={i} onChange={this.updateTime} />
                     </div>
                 )
             })
+        }
+    }
+    changeDate = (e) => {
+        this.setState({ popupOpen : true })
+        let {event, dateIndex} = this.state
+        dateIndex = e.target.dataset.index
+
+        this.setState({
+            dateIndex : dateIndex
+        })
+
+    }
+    viewDates = () => {
+        let {event, dateIndex} = this.state
+        return event.dates.map((event, i) => {
+            return(
+                <div key={i} >
+                    Datum {i}
+                    <div className="fa fa-pencil" data-index={i} onClick={this.changeDate}></div>
+                    <div className="fa fa-trash-o" data-index={i} onClick={this.deleteDate}></div>
+                </div>
+            )
+        })
+    }
+    deleteDate = (e) => {
+        let {event, dateIndex} = this.state
+        event.dates.splice(dateIndex, 1)
+        this.setState({
+            event : event
+        })
+    }
+    changeDateName = () =>{
+        let dateName = moment()
+        if("undefined" !== typeof this.state.event.dates[this.state.dateIndex]){
+            dateName = this.state.event.dates[this.state.dateIndex].date
+        }
+        return(
+            <DatePicker dateFormat="DD/MM/YYYY" selected={dateName}  data-index={this.state.dateIndex}
+            onChange={this.updateDate}/>
+        )
     }
 
     render() {
@@ -85,33 +137,26 @@ class ConfigureEvents extends React.Component {
             <Panel theme="info">
                 <PanelHeader inverted theme="default">Maak nieuwe event aan</PanelHeader>
                     <div className="col-xs-12 col-md-6">
-                        <Form model="event" onSubmit={this.saveEvent}>
-                            <Input label="Naam" name="name" onChange={this.update} />
-                            <Button onClick={this.addDate}>Datum</Button><br/><br/>
-                            <Overlay open={this.state.popupOpen}>
-                                <Panel theme="info">
-                                    <PanelHeader inverted theme="default">
-                                    Datum toevoegen <Button onClick={this.stopPopup}>X</Button>
-                                    </PanelHeader>
-                                    <Input label="Datum" name="date" onChange={this.updateDate} />
-                                    {this.showTime()}
-                                    <Button onClick={this.addTime}>+ Tijd</Button><br/>
-                                    <Button onClick={this.updateDate}>Datum opslaan</Button>
-                                </Panel>
-                            </Overlay>
-                            <Input label="Beschrijving" name="description" onChange={this.update} />
-                            <Button>Opslaan</Button>
-                        </Form>
+                        <Input label="Naam" name="name" onChange={this.update}/>
+                        {this.viewDates()}
+                        <Button onClick={this.addDate}>Datum toevoegen</Button><br/><br/>
+                        <Overlay open={this.state.popupOpen}>
+                            <Panel theme="info">
+                                <PanelHeader inverted theme="default">
+                                Datum toevoegen <Button onClick={this.stopPopup}>X</Button>
+                                </PanelHeader>
+                                {this.changeDateName()}<br/>
+                                {this.showTime()}<br/>
+                                <Button onClick={this.addTime}>+ Tijd</Button><br/>
+                                <Button onClick={this.stopPopup}>Datum opslaan</Button>
+                            </Panel>
+                        </Overlay>
+                        <Input label="Beschrijving" name="description" onChange={this.update} />
+                        <Button onClick={this.saveEvent}>Opslaan</Button>
                     </div>
             </Panel>
         )
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        event : state.app.event
-    }
-}
-
-export default connect(mapStateToProps)(ConfigureEvents)
+export default connect()(ConfigureEvents)

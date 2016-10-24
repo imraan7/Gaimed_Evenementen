@@ -28,7 +28,7 @@ class Register extends React.Component {
     }
 
     renderDepartment= () => {
-        if(this.props.person.type === "ambtenaar") {
+        if(this.props.person.type === "employee") {
             return (<Input label="Afdeling" name="department" onChange={this.update} />)
         }
     }
@@ -44,7 +44,7 @@ class Register extends React.Component {
                     <div className="col-xs-12 col-md-6">
                         <Form model="person" onSubmit={this.savePerson}>
                             <Select label="Type" name="type"
-                                options={[{children: 'Ambtenaar', value: "ambtenaar"}, {children: 'Inwoner', value: "inwoner"}]}
+                                options={[{children: 'Ambtenaar', value: "employee"}, {children: 'Inwoner', value: "citizen"}]}
                                 onChange={this.update}/>
                             <Input label="Voornaam" name="firstname" onChange={this.update} />
                             <Input label="Achternaam" name="lastname" onChange={this.update} />

@@ -27,8 +27,11 @@ module.exports = function() {
     .findOne({ email : "admin@gaimed.com" })
     .then(item => {
         if(item === null) {
+            console.log("adding user?");
             userService
                 .create({ type : "local", email : "admin@gaimed.com", password : "test" })
+                .then(user => console.log(user))
+                .catch(err => console.log(err))
         }
         else {
             console.log("user already exists");

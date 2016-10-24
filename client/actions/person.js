@@ -3,12 +3,12 @@ import app from '../feathers'
 
 const service = app.service("people")
 
-export const fetch_people = (status) => {
+export const fetch_people = (event) => {
     return (dispatch, getState) => {
         service
             .find({
                 query : {
-                    status : status
+                    event : event
                 }
             })
             .then((items) => {

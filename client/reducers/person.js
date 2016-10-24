@@ -1,6 +1,6 @@
 import { modeled } from 'react-redux-form'
 
-export const person = modeled((state = { type : "ambtenaar" }, action) => {
+export const person = modeled((state = { type : "employee" }, action) => {
   switch (action.type) {
     case "RECEIVE_PERSON":
       return {...action.msg}
