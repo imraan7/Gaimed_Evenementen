@@ -82300,7 +82300,11 @@
 	            var personIndex = _this.state.personIndex;
 
 	            if ("undefined" !== typeof people && "undefined" !== typeof people[personIndex]) {
-	                return _react2.default.createElement(_rebass.Input, { label: 'Naam', name: 'firstname', value: people[personIndex].firstname, 'data-index': personIndex });
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(_rebass.Input, { label: 'Naam', name: 'firstname', value: people[personIndex].firstname, 'data-index': personIndex })
+	                );
 	            }
 	            //<Input label="Datum" name="date" value={} data-index={i} onChange={} />
 	            //<Input label="Begintijd" name="beginTime" value={} data-index={i} onChange={} />
@@ -82311,56 +82315,65 @@
 
 	            if ("undefined" !== typeof people) {
 	                return _react2.default.createElement(
-	                    'table',
+	                    'div',
 	                    null,
 	                    _react2.default.createElement(
-	                        'thead',
+	                        'h4',
+	                        null,
+	                        'Tabel met aanmeldingen, alleen te zien voor de admin'
+	                    ),
+	                    _react2.default.createElement(
+	                        'table',
 	                        null,
 	                        _react2.default.createElement(
-	                            'tr',
+	                            'thead',
 	                            null,
-	                            _react2.default.createElement(
-	                                'th',
-	                                null,
-	                                'Naam'
-	                            ),
-	                            _react2.default.createElement(
-	                                'th',
-	                                null,
-	                                'Type'
-	                            ),
-	                            _react2.default.createElement(
-	                                'th',
-	                                null,
-	                                'Wijzigen'
-	                            )
-	                        )
-	                    ),
-	                    people.map(function (person, i) {
-	                        return _react2.default.createElement(
-	                            'tbody',
-	                            { key: i },
 	                            _react2.default.createElement(
 	                                'tr',
 	                                null,
 	                                _react2.default.createElement(
-	                                    'td',
+	                                    'th',
 	                                    null,
-	                                    person.firstname
+	                                    'Naam'
 	                                ),
 	                                _react2.default.createElement(
-	                                    'td',
+	                                    'th',
 	                                    null,
-	                                    person.type
+	                                    'Type'
 	                                ),
 	                                _react2.default.createElement(
-	                                    'td',
+	                                    'th',
 	                                    null,
-	                                    _react2.default.createElement('div', { className: 'fa fa-pencil', 'data-index': i, onClick: _this.changeDate })
+	                                    'Wijzigen'
 	                                )
 	                            )
-	                        );
-	                    })
+	                        ),
+	                        people.map(function (person, i) {
+	                            return _react2.default.createElement(
+	                                'tbody',
+	                                { key: i },
+	                                _react2.default.createElement(
+	                                    'tr',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        person.firstname
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        person.type
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        _react2.default.createElement('div', { className: 'fa fa-pencil', 'data-index': i, onClick: _this.changeDate })
+	                                    )
+	                                )
+	                            );
+	                        })
+	                    )
 	                );
 	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -96988,21 +97001,53 @@
 	            args[_key] = arguments[_key];
 	        }
 
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Register.__proto__ || Object.getPrototypeOf(Register)).call.apply(_ref, [this].concat(args))), _this), _this.update = function (e) {
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Register.__proto__ || Object.getPrototypeOf(Register)).call.apply(_ref, [this].concat(args))), _this), _this.state = { dateIndex: 0 }, _this.update = function (e) {
 	            var dispatch = _this.props.dispatch;
 
 	            dispatch(_reactReduxForm.actions.change("person." + e.target.name, e));
+	        }, _this.updateDate = function (e) {
+	            var dispatch = _this.props.dispatch;
+	            var dateIndex = _this.state.dateIndex;
+
+	            dateIndex = e.target.value;
+	            dispatch(_reactReduxForm.actions.change("person." + e.target.name, e));
+
+	            _this.setState({
+	                dateIndex: dateIndex
+	            });
+	        }, _this.updateTime = function (e) {
+	            var dispatch = _this.props.dispatch;
+
+	            dispatch(_reactReduxForm.actions.change("person.time" + e.target.value, e));
 	        }, _this.savePerson = function () {
 	            var _this$props = _this.props;
 	            var dispatch = _this$props.dispatch;
 	            var person = _this$props.person;
 
 	            console.log(person);
-
-	            dispatch((0, _person.create_person)(person, _person.fetch_person));
+	            //dispatch(create_person(person, fetch_person))
 	        }, _this.renderDepartment = function () {
 	            if (_this.props.person.type === "employee") {
 	                return _react2.default.createElement(_rebass.Input, { label: 'Afdeling', name: 'department', onChange: _this.update });
+	            }
+	        }, _this.renderDates = function () {
+	            var event = _this.props.event;
+
+	            return _react2.default.createElement(_rebass.Select, { label: 'Datum', name: 'date',
+	                options: event.dates.map(function (date, i) {
+	                    return { children: date.date, value: i };
+	                }), onChange: _this.updateDate
+	            });
+	        }, _this.renderBeginTime = function () {
+	            var event = _this.props.event;
+	            var dateIndex = _this.state.dateIndex;
+
+	            if ("undefined" !== typeof dateIndex && "undefined" !== typeof event.dates[dateIndex]) {
+	                return _react2.default.createElement(_rebass.Select, { label: 'Tijd', name: 'time',
+	                    options: event.dates[dateIndex].times.map(function (time, i) {
+	                        return { children: time.beginTime + "-" + time.endTime, value: time };
+	                    }), onChange: _this.updateTime
+	                });
 	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
@@ -97049,6 +97094,8 @@
 	                            _react2.default.createElement(_rebass.Input, { label: 'Telefoonnummer', name: 'telephone', onChange: this.update }),
 	                            _react2.default.createElement(_rebass.Input, { label: 'Emailadres', name: 'email', onChange: this.update }),
 	                            this.renderDepartment(),
+	                            this.renderDates(),
+	                            this.renderBeginTime(),
 	                            _react2.default.createElement(
 	                                _rebass.Button,
 	                                null,
@@ -97066,6 +97113,7 @@
 
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
+	        event: state.app.event,
 	        person: state.app.person
 	    };
 	};

@@ -39,7 +39,9 @@ class Event extends React.Component {
         let {personIndex} = this.state
         if("undefined" !== typeof people && "undefined" !== typeof people[personIndex]){
             return(
-                <Input label="Naam" name="firstname" value={people[personIndex].firstname} data-index={personIndex}/>
+                <div>
+                    <Input label="Naam" name="firstname" value={people[personIndex].firstname} data-index={personIndex}/>
+                </div>
             )
         }
         //<Input label="Datum" name="date" value={} data-index={i} onChange={} />
@@ -51,26 +53,29 @@ class Event extends React.Component {
 
         if("undefined" !== typeof people){
             return (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Naam</th>
-                            <th>Type</th>
-                            <th>Wijzigen</th>
-                        </tr>
-                    </thead>
-                    {people.map((person, i) => {
-                        return(
-                            <tbody key={i}>
-                                <tr>
-                                    <td>{person.firstname}</td>
-                                    <td>{person.type}</td>
-                                    <td><div className="fa fa-pencil" data-index={i} onClick={this.changeDate}></div></td>
-                                </tr>
-                            </tbody>
-                        )
-                    })}
-                </table>
+                <div>
+                    <h4>Tabel met aanmeldingen, alleen te zien voor de admin</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Naam</th>
+                                <th>Type</th>
+                                <th>Wijzigen</th>
+                            </tr>
+                        </thead>
+                        {people.map((person, i) => {
+                            return(
+                                <tbody key={i}>
+                                    <tr>
+                                        <td>{person.firstname}</td>
+                                        <td>{person.type}</td>
+                                        <td><div className="fa fa-pencil" data-index={i} onClick={this.changeDate}></div></td>
+                                    </tr>
+                                </tbody>
+                            )
+                        })}
+                    </table>
+                </div>
             )
         }
     }

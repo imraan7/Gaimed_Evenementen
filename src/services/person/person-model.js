@@ -19,6 +19,8 @@ const personSchema = new Schema({
     telephone: { type: String },
     email: { type: String },
     department: { type: String },
+    date : { type: Date, required: false },
+    time : { beginTime : String, endTime : String },
     event: {
 		type: Schema.Types.ObjectId,
         ref : "event",

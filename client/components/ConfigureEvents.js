@@ -100,7 +100,6 @@ class ConfigureEvents extends React.Component {
         this.setState({
             dateIndex : dateIndex
         })
-
     }
     viewDates = () => {
         let {event, dateIndex} = this.state

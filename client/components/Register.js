@@ -6,6 +6,7 @@ import { Button, Input, Select, Label, Panel, PanelHeader} from 'rebass'
 import {fetch_person, create_person} from '../actions/person'
 
 class Register extends React.Component {
+    state={ dateIndex : 0}
 
     componentWillUpdate(nextProps) {
         const {dispatch, person} = this.props
@@ -20,11 +21,25 @@ class Register extends React.Component {
         dispatch(actions.change("person." + e.target.name, e))
     }
 
+    updateDate= (e) => {
+        const {dispatch} = this.props
+        let {dateIndex} = this.state
+        dateIndex = e.target.value
+        dispatch(actions.change("person." + e.target.name, e))
+
+        this.setState({
+            dateIndex : dateIndex
+        })
+    }
+
+    updateTime= (e) => {
+        const {dispatch} = this.props
+        dispatch(actions.change("person.time" + e.target.value, e))
+    }
     savePerson= () => {
         const { dispatch, person } = this.props
         console.log(person);
-
-        dispatch(create_person(person, fetch_person))
+        //dispatch(create_person(person, fetch_person))
     }
 
     renderDepartment= () => {
@@ -32,6 +47,34 @@ class Register extends React.Component {
             return (<Input label="Afdeling" name="department" onChange={this.update} />)
         }
     }
+    renderDates= () => {
+        const { event } = this.props
+        return(
+            <Select label="Datum" name="date"
+                options={event.dates.map((date, i) => {
+                    return(
+                        {children: date.date, value: i}
+                    )
+                })} onChange={this.updateDate}
+            />
+        )
+    }
+    renderBeginTime= () => {
+        const { event } = this.props
+        let {dateIndex} = this.state
+        if("undefined" !== typeof dateIndex && "undefined" !== typeof event.dates[dateIndex]){
+            return(
+                <Select label="Tijd" name="time"
+                    options={event.dates[dateIndex].times.map((time, i) => {
+                        return(
+                            {children: time.beginTime + "-" + time.endTime, value: time }
+                        )
+                    })} onChange={this.updateTime}
+                />
+            )
+        }
+    }
+
 
     render() {
         const {event} = this.props
@@ -51,6 +94,8 @@ class Register extends React.Component {
                             <Input label="Telefoonnummer" name="telephone" onChange={this.update} />
                             <Input label="Emailadres" name="email" onChange={this.update} />
                             {this.renderDepartment()}
+                            {this.renderDates()}
+                            {this.renderBeginTime()}
                             <Button>Opslaan</Button>
                         </Form>
                     </div>
@@ -62,6 +107,7 @@ class Register extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        event : state.app.event,
         person : state.app.person
     }
 }
